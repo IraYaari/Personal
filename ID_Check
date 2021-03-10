@@ -1,0 +1,40 @@
+import numpy as np
+
+### Israeli ID numbers contains 9 digits. The first 8 are random, and the 9th is calculated based on the first 8.
+### The calculation works as follows:
+### Step 1: Multiple each digit in an odd place by 1 and each digit in an even place by 2.
+### Step 2: If the number (after the multiplication) is two-digits number, sum its digits (so, 10 = 1, 12 = 3, etc.). Practicly, It can happen only for digits in an even place.
+### Step 3: Sum all the numbers you came up with.
+### Step 4: The 9th digit should round the sum of all the numbers to the nearest number divdable by 10 (so, if the result of step 3 was 32, the 9th digit should be 8).
+
+def dig_sum(num):                     # A function that breaks a multi-digits number into digits and sums them up. I didn't force the end result to by a single digit as it is not relevant for this case.
+  num_list = list(num)                # Casting the number to a list based from its digits.
+  sum_int = 0                         # This variable will contain the sum of the digits
+  for i in range(0,len(num_list)):    # Looping through the list and: 
+    num_list[i] = int(num_list[i])    # (1) Making all the components integers, 
+    sum_int = sum_int + num_list[i]   # (2) Summing them up
+  return sum_int
+  
+def id_check(id_num):                  # This function will use the dig_sum function and go through the entire proccess of checking whether an ID is valid or not
+  if len(id_num) > 9:                  # Announce when the provided ID number has more than 9 digits 
+    return "Too many digits"
+  elif len(id_num) == 8:               # Announce when the provided ID number has 8 digits. In this case it is likely the number provided lacked the check-digit. 
+    return "Please check the number provided and pay atteintion to adding the check-digit"
+  elif len(id_num) < 8:                # Announce when the provided ID number doesn't have enough numbers 
+    return "Not enough digits"
+  else:
+    final_num = 0                                       # I will use this variable to sum all the numbers (steps 3 + 4)
+    num_list = list(id_num)                             # Casting the ID number to a list
+    for i in range(0,len(num_list)):                    # Looping through the ID number (list) in order to:
+      num_list[i] = int(num_list[i])                    # (1) Cast the component to an integer
+      if i%2 == 0:                                      # This is for odd-places digits
+        final_num = final_num + num_list[i]             # (2a) Summing the odd-place digits
+      else:                                             # The even-places digits
+        final_num = final_num + dig_sum(2*num_list[i])  # (2b) Summing the even-places digits (after multilplying by 2 and applyig the dig_sum function)
+    if final_num % 10 == 0:                             # Checking whether adding the 9th digits (which is not multiplied) brings us to a number dividable by 10
+      return "Valid ID"                                 # If so - it's valid
+    else:
+      return "Fake! Off with its head!"                 # If not - well... they deserve it!
+      
+id_num = input('Insert ID number (9 digits)  ")         # Input from the user
+id_check(id_num)                                        # Checkin the user's input
